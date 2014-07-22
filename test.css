@@ -1,0 +1,10 @@
+ol {
+    padding: 0;
+}
+
+ol li {
+    color: #FFF;
+    font-family: "Helvetica Neue", sans-serif;
+    font-weight: bold;
+    padding: 10px;
+}
