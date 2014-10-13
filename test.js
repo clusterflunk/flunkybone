@@ -51,13 +51,9 @@ var InfiniteItems = Backbone.Collection.extend({
 
         this.add(addition);
 
-        if(this.length == items.length) {
-            this.add({"id": "7", "body":"The End", "html": "<li style=\"background-color: #242424;\">the end</li>"})
+        if(this.length >= items.length) {
+            return 'end_of_list';
         }
-
-        /* can't return success w/ no http request, so manual spinner gif hide */
-        $('.spinner_gif').hide();
-        $('.load_more').show();
 
     }, 1500)
 });
@@ -161,17 +157,21 @@ var InfiniteItemsView = Flunkybone.CollectionView.extend({
         _.bindObj(this);
 
         /* Cached Elements */
-        this.items_el = this.$el.find('.infinite_items');
+        this.items_el = this.$el;
+        this.end_of_list_el = this.items_el.find('.end');
         this.scroll_el = $('.load_more');
-        this.spinner_gif = $('.spinner_gif');
+        this.scroll_text = this.scroll_el.find('.text');
+        this.scroll_spinner = this.scroll_el.find('.spinner_gif');
 
         /* Subviews */
         this.infinite_items = new Flunkybone.InfiniteCollectionView({
             'el': this.items_el,
             'collection': this.collection,
+            'load_amount_limit': 2,
+            'end_of_list_el': this.end_of_list_el,
             'scroll_el': this.scroll_el,
-            'spinner_gif': this.spinner_gif,
-            'load_amount_limit': 2
+            'scroll_text': this.scroll_text,
+            'scroll_spinner': this.scroll_spinner
         });
     }
 });

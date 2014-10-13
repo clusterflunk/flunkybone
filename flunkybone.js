@@ -96,7 +96,6 @@ var Flunkybone = {};
         */
 
         filter_collection: function(e) {
-            /* show spinner */
             this.collection.fetch({
                 'reset': true,
                 'data': {
@@ -106,7 +105,6 @@ var Flunkybone = {};
             });
         },
         filter_collection_success: function(e) {
-            /* hide spinner */
             if (this.collection.length > 0) {
                 /* show the results */
                 this.collection.reset();
@@ -126,30 +124,39 @@ var Flunkybone = {};
             _.bindObj(this);
 
             /* Vars */
+            this.end_of_list_el = options.end_of_list_el;
             this.options = options;
             this.limit = options.load_amount_limit;
             this.scroll_el = options.scroll_el;
-            this.spinner_gif = options.spinner_gif;
+            this.scroll_text_el = options.scroll_text;
+            this.scroll_spinner_el = options.scroll_spinner;
 
             /* Events */
             this.scroll_el.click(this.ready_to_load);
-            $(window).on("scroll", _.debounce(this.ready_to_load, 0));
+            $(window).on("scroll", _.throttle(this.ready_to_load, 300));
         },
 
+        /*
+        * Load next set of elements for collection
+        */
+
         load_more: function() {
-            /* show spinner & hide text */
-            this.scroll_el.hide();
-            this.spinner_gif.show();
+
+            this.scroll_spinner_only();
 
             /* fetch */
-            this.collection.fetch({
+            var response = this.collection.fetch({
                 'merge': true,
                 'data': {
                     'offset': this.collection.length,
                     'limit': this.limit
-                },
-                'success': this.hide_spinner
+                }
             });
+
+            if(response == "end_of_list") {
+                this.end_of_list_el.show();
+                this.scroll_el.hide();
+            }
         },
 
         /* checks position of scroll element on page before loading more */
@@ -169,17 +176,20 @@ var Flunkybone = {};
 
         },
 
-        /* hide spinner */
-        hide_spinner: function() {
-            /* hide spinner & show text */
-            this.scroll_el.show();
-            this.spinner_gif.hide();
+        /* hide spinner, show text */
+        scroll_text_only: function() {
+            this.scroll_text_el.show();
+            this.scroll_spinner_el.hide();
+        },
 
+        scroll_spinner_only: function() {
+            this.scroll_text_el.hide();
+            this.scroll_spinner_el.show();
         }
     });
 
     /*
-    * Flunkybone.ViewCollection ---> ViewModel?
+    * Flunkybone.ViewCollection
     */
 
     var ModelView = Flunkybone.ModelView = Backbone.View.extend({

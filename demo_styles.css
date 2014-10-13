@@ -30,3 +30,11 @@ ol.items{
 ol.infinite_items li{
   height: 350px;
 }
+
+ol.infinite_items li.end{
+  background: #d7d7d9;
+  color: #454545;
+  height: 20px;
+  text-align: center;
+  text-transform: uppercase;
+}
