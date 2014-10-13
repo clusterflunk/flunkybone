@@ -63,6 +63,8 @@ var Flunkybone = {};
 
                     /* remove from our list of views */
                     this.views.splice(index, 1);
+                } else {
+                    return true;
                 }
             }, this);
         }
