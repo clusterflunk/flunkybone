@@ -64,6 +64,7 @@ var Flunkybone = {};
                     /* remove from our list of views */
                     this.views.splice(index, 1);
                 } else {
+                    /* _.every loop breaks on false, so to counter the offset model id, return true in else fork */
                     return true;
                 }
             }, this);
