@@ -56,20 +56,72 @@ var Flunkybone = {};
             this.els = this.$el.children('li');
         },
         _remove: function(model) {
-            _.each(this.views, function(view) {
+            _.every(this.views, function(view, index) {
                 if (view.model.id == model.id) {
                     /* remove the view from the DOM */
                     view.remove();
 
                     /* remove from our list of views */
-                    this.views.splice(i, 1);
+                    this.views.splice(index, 1);
                 }
-            });
+            }, this);
         }
     });
 
     /*
-    * Flunkybone.ViewCollection
+    * Flunkybone.FilterableCollectionView
+    */
+
+    var FilterableCollectionView = Flunkybone.FilterableCollectionView = Backbone.View.extend({
+        modelView: null,
+        initialize: function(options) {
+            _.bindObj(this);
+
+            /* Vars */
+            this.options = options
+            this.input_el = this.options.input_el
+
+            /* Events */
+            this.input_el.keydown(_.debounce(this.filter_collection, 0));
+        },
+
+        /* 
+        * Filtering through a collection
+        */
+
+        input_el_keydown: function(e) {
+            /* if user presses non alpha numeric key */
+            if (!((48 >= e.which <= 90) || (96 >= e.which <= 105))) {
+                /* prevent the form from submitting */
+                return false;
+            }
+        },
+        filter_collection: function(e) {
+            if (this.input_el.val() !== '') {
+                /* show spinner */
+
+                this.collection.fetch({
+                    'reset': true,
+                    'data': {
+                        's': this.input_el.val()
+                    },
+                    'success': this.filter_collection_success
+                });
+            }
+        },
+        filter_collection_success: function(e) {
+            /* hide spinner */
+            if (this.collection.length > 0) {
+                /* show the results */
+                this.collection.reset();
+            } else {
+                /* display "no results found" */
+            }
+        }
+    });
+
+    /*
+    * Flunkybone.ViewCollection ---> ViewModel?
     */
 
     var ModelView = Flunkybone.ModelView = Backbone.View.extend({
@@ -83,6 +135,7 @@ var Flunkybone = {};
     */
 
     _.mixin({
+
         /*
         *  _.bindObj - bind all of an objects functions to a particular context.
         */

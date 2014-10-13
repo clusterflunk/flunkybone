@@ -1,15 +1,31 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <title>FlunkyBone Demo</title>
+
+        <link rel="stylesheet" type="text/css" href="test.css" />
+        <link rel="stylesheet" type="text/css" href="demo_styles.css" />
+
+        <!-- REQUIRED DEPENDENCIES-->
         <script type="text/javascript" charset="utf-8" src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
         <script type="text/javascript" charset="utf-8" src="http://underscorejs.org/underscore-min.js"></script>
         <script type="text/javascript" charset="utf-8" src="http://backbonejs.org/backbone-min.js"></script>
         <script type="text/javascript" charset="utf-8" src="flunkybone.js"></script>
-        <link rel="stylesheet" type="text/css" href="test.css" />
+        <!-- /REQUIRED -->
+
     </head>
     <body>
+
+        <h1>FlunkyBone Demo</h1>
+
+        <h2>Standard Usage</h2>
         <ol class="items"></ol>
 
+        <h2>Live Filter Update</h2>
+        <input type="text" class="search_filterable_items" placeholder="Start Typing ..."></input>
+        <ol class="filterable_items"></ol>
+
         <script type="text/javascript" charset="utf-8" src="test.js"></script>
+
     </body>
 </html>
