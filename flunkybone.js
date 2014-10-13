@@ -124,15 +124,10 @@ var Flunkybone = {};
             _.bindObj(this);
 
             /* Vars */
-            this.end_of_list_el = options.end_of_list_el;
             this.options = options;
-            this.limit = options.load_amount_limit;
-            this.scroll_el = options.scroll_el;
-            this.scroll_text_el = options.scroll_text;
-            this.scroll_spinner_el = options.scroll_spinner;
 
             /* Events */
-            this.scroll_el.click(this.ready_to_load);
+            this.options.scroll_el.click(this.ready_to_load);
             $(window).on("scroll", _.throttle(this.ready_to_load, 300));
         },
 
@@ -149,13 +144,13 @@ var Flunkybone = {};
                 'merge': true,
                 'data': {
                     'offset': this.collection.length,
-                    'limit': this.limit
+                    'limit': this.options.limit
                 }
             });
 
             if(response == "end_of_list") {
-                this.end_of_list_el.show();
-                this.scroll_el.hide();
+                this.options.end_of_list_el.show();
+                this.options.scroll_el.hide();
             }
         },
 
@@ -165,9 +160,9 @@ var Flunkybone = {};
             var docViewTop = $(window).scrollTop();
             var docViewBottom = docViewTop + $(window).height();
 
-            var elemTop = this.scroll_el.offset().top;
+            var elemTop = this.options.scroll_el.offset().top;
             // add to this measurement to ask element is at least x pixels up from bottom
-            var elemBottom = elemTop + this.scroll_el.height() + 40;
+            var elemBottom = elemTop + this.options.scroll_el.height() + this.options.scroll_el_bottom_margin;
 
             /* if element is scrolled into the view */
             if((elemBottom <= docViewBottom) && (elemTop >= docViewTop)) {
@@ -178,13 +173,13 @@ var Flunkybone = {};
 
         /* hide spinner, show text */
         scroll_text_only: function() {
-            this.scroll_text_el.show();
-            this.scroll_spinner_el.hide();
+            this.options.scroll_text_el.show();
+            this.options.scroll_spinner_el.hide();
         },
 
         scroll_spinner_only: function() {
-            this.scroll_text_el.hide();
-            this.scroll_spinner_el.show();
+            this.options.scroll_text_el.hide();
+            this.options.scroll_spinner_el.show();
         }
     });
 

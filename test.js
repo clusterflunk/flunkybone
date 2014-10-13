@@ -167,11 +167,12 @@ var InfiniteItemsView = Flunkybone.CollectionView.extend({
         this.infinite_items = new Flunkybone.InfiniteCollectionView({
             'el': this.items_el,
             'collection': this.collection,
-            'load_amount_limit': 2,
+            'limit': 2,
             'end_of_list_el': this.end_of_list_el,
             'scroll_el': this.scroll_el,
-            'scroll_text': this.scroll_text,
-            'scroll_spinner': this.scroll_spinner
+            'scroll_el_bottom_margin': 40,
+            'scroll_text_el': this.scroll_text,
+            'scroll_spinner_el': this.scroll_spinner
         });
     }
 });
