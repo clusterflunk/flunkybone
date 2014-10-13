@@ -12,7 +12,7 @@ var Flunkybone = {};
     */
 
     var CollectionView = Flunkybone.CollectionView = Backbone.View.extend({
-        modelView: null,
+        model_view: null,
         constructor: function(options) {
             this.views = [];
 
@@ -69,7 +69,6 @@ var Flunkybone = {};
 
                 /* _.every loop breaks on false, so to counter the offset model id, return true in else fork */
                 return true;
-
             }, this);
         }
     });
@@ -79,13 +78,12 @@ var Flunkybone = {};
     */
 
     var FilterableCollectionView = Flunkybone.FilterableCollectionView = Backbone.View.extend({
-        modelView: null,
+        model_view: null,
         initialize: function(options) {
             _.bindObj(this);
 
             /* Vars */
-            this.options = options;
-            this.input_el = this.options.input_el;
+            this.input_el = options.input_el;
 
             /* Events */
             this.input_el.keyup(_.debounce(this.filter_collection, 0));
@@ -119,15 +117,20 @@ var Flunkybone = {};
     */
 
     var InfiniteCollectionView = Flunkybone.InfiniteCollectionView = Backbone.View.extend({
-        modelView: null,
+        model_view: null,
         initialize: function(options) {
             _.bindObj(this);
 
             /* Vars */
-            this.options = options;
+            this.limit = options.limit;
+            this.end_of_list_el = options.end_of_list_el;
+            this.scroll_el = options.scroll_el;
+            this.scroll_el_bottom_margin = options.scroll_el_bottom_margin;
+            this.scroll_text_el = options.scroll_text_el;
+            this.scroll_spinner_el = options.scroll_spinner_el;
 
             /* Events */
-            this.options.scroll_el.click(this.ready_to_load);
+            this.scroll_el.click(this.ready_to_load);
             $(window).on("scroll", _.throttle(this.ready_to_load, 300));
         },
 
@@ -136,55 +139,52 @@ var Flunkybone = {};
         */
 
         load_more: function() {
-
             this.scroll_spinner_only();
 
-            /* fetch */
             var response = this.collection.fetch({
                 'merge': true,
                 'data': {
                     'offset': this.collection.length,
-                    'limit': this.options.limit
+                    'limit': this.limit
                 }
             });
 
-            if(response == "end_of_list") {
-                this.options.end_of_list_el.show();
-                this.options.scroll_el.hide();
+            if (response == "end_of_list") {
+                this.end_of_list_el.show();
+                this.scroll_el.hide();
             }
         },
 
         /* checks position of scroll element on page before loading more */
         ready_to_load: function() {
-
             var docViewTop = $(window).scrollTop();
             var docViewBottom = docViewTop + $(window).height();
-
-            var elemTop = this.options.scroll_el.offset().top;
-            // add to this measurement to ask element is at least x pixels up from bottom
-            var elemBottom = elemTop + this.options.scroll_el.height() + this.options.scroll_el_bottom_margin;
+            var elemTop = this.scroll_el.offset().top;
+            var elemBottom = elemTop + this.scroll_el.height() + this.scroll_el_bottom_margin;
 
             /* if element is scrolled into the view */
-            if((elemBottom <= docViewBottom) && (elemTop >= docViewTop)) {
+
+            if ((elemBottom <= docViewBottom) && (elemTop >= docViewTop)) {
                 this.load_more();
             }
-
         },
 
-        /* hide spinner, show text */
+        /*
+        * Show/Hide Scroll Text and Spinner
+        */
+
         scroll_text_only: function() {
-            this.options.scroll_text_el.show();
-            this.options.scroll_spinner_el.hide();
+            this.scroll_text_el.show();
+            this.scroll_spinner_el.hide();
         },
-
         scroll_spinner_only: function() {
-            this.options.scroll_text_el.hide();
-            this.options.scroll_spinner_el.show();
+            this.scroll_text_el.hide();
+            this.scroll_spinner_el.show();
         }
     });
 
     /*
-    * Flunkybone.ViewCollection
+    * Flunkybone.ModelView
     */
 
     var ModelView = Flunkybone.ModelView = Backbone.View.extend({

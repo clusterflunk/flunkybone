@@ -21,7 +21,6 @@ var Item = Backbone.Model.extend({
 var Items = Backbone.Collection.extend({
     model: Item,
     fetch: function(options){
-
         var results = [];
         var search = options.data.s;
 
@@ -31,7 +30,7 @@ var Items = Backbone.Collection.extend({
             }
         });
 
-        if(search == "") {
+        if (search == "") {
             results = items;
         }
 
@@ -42,7 +41,6 @@ var Items = Backbone.Collection.extend({
 var InfiniteItems = Backbone.Collection.extend({
     model: Item,
     fetch: _.debounce(function(options) {
-
         var collection = this;
         var offset = options.data.offset;
         var limit = options.data.limit;
@@ -51,10 +49,9 @@ var InfiniteItems = Backbone.Collection.extend({
 
         this.add(addition);
 
-        if(this.length >= items.length) {
+        if (this.length >= items.length) {
             return 'end_of_list';
         }
-
     }, 1500)
 });
 
@@ -158,21 +155,18 @@ var InfiniteItemsView = Flunkybone.CollectionView.extend({
 
         /* Cached Elements */
         this.items_el = this.$el;
-        this.end_of_list_el = this.items_el.find('.end');
         this.scroll_el = $('.load_more');
-        this.scroll_text = this.scroll_el.find('.text');
-        this.scroll_spinner = this.scroll_el.find('.spinner_gif');
 
         /* Subviews */
         this.infinite_items = new Flunkybone.InfiniteCollectionView({
             'el': this.items_el,
             'collection': this.collection,
             'limit': 2,
-            'end_of_list_el': this.end_of_list_el,
+            'end_of_list_el': this.items_el.find('.end'),
             'scroll_el': this.scroll_el,
             'scroll_el_bottom_margin': 40,
-            'scroll_text_el': this.scroll_text,
-            'scroll_spinner_el': this.scroll_spinner
+            'scroll_text_el': this.scroll_el.find('.text'),
+            'scroll_spinner_el': this.scroll_el.find('.spinner_gif')
         });
     }
 });
