@@ -7,7 +7,8 @@ var items = [
     {"id": "2", "body": "this is rome", "html": "<li style=\"background-color: #FFB347;\">this is rome</li>"},
     {"id": "3", "body": "this is greece", "html": "<li style=\"background-color: #966FD6;\">this is greece</li>"},
     {"id": "4", "body": "this is persia", "html": "<li style=\"background-color: #C23B22;\">this is persia</li>"},
-    {"id": "5", "body": "this is 'merica", "html": "<li style=\"background-color: #03C03C;\">this is 'merica</li>"}
+    {"id": "5", "body": "this is canadia", "html": "<li style=\"background-color: #990000;\">this is canadia</li>"},
+    {"id": "6", "body": "this is 'merica", "html": "<li style=\"background-color: #03C03C;\">this is 'merica</li>"}
 ];
 
 /*
@@ -36,6 +37,29 @@ var Items = Backbone.Collection.extend({
 
         this.set(results);
     }
+});
+
+var InfiniteItems = Backbone.Collection.extend({
+    model: Item,
+    fetch: _.debounce(function(options) {
+
+        var collection = this;
+        var offset = options.data.offset;
+        var limit = options.data.limit;
+
+        var addition = items.slice(offset, (offset+limit));
+
+        this.add(addition);
+
+        if(this.length == items.length) {
+            this.add({"id": "7", "body":"The End", "html": "<li style=\"background-color: #242424;\">the end</li>"})
+        }
+
+        /* can't return success w/ no http request, so manual spinner gif hide */
+        $('.spinner_gif').hide();
+        $('.load_more').show();
+
+    }, 1500)
 });
 
 /* STANDARD USE DEMO */
@@ -115,5 +139,55 @@ var filterable_items_collection_view = new FilterableItemsView({
 _.each(items, function(item, i) {
     window.setTimeout(function() {
         filterable_items_collection.add(item);
+    }, i);
+});
+
+
+/* INFINITE SCROLL DEMO */
+
+/*
+* Views
+*/
+
+var InfiniteItemView = Flunkybone.ModelView.extend({
+    initialize: function() {
+        _.bindObj(this);
+    }
+});
+
+var InfiniteItemsView = Flunkybone.CollectionView.extend({
+    modelView: InfiniteItemView,
+    initialize: function() {
+        _.bindObj(this);
+
+        /* Cached Elements */
+        this.items_el = this.$el.find('.infinite_items');
+        this.scroll_el = $('.load_more');
+        this.spinner_gif = $('.spinner_gif');
+
+        /* Subviews */
+        this.infinite_items = new Flunkybone.InfiniteCollectionView({
+            'el': this.items_el,
+            'collection': this.collection,
+            'scroll_el': this.scroll_el,
+            'spinner_gif': this.spinner_gif,
+            'load_amount_limit': 2
+        });
+    }
+});
+
+
+/* Vars */
+
+var infinite_items_collection = new InfiniteItems();
+var infinite_items_el = $(".infinite_items");
+var infinite_items_collection_view = new InfiniteItemsView({
+    'collection': infinite_items_collection,
+    'el': infinite_items_el
+});
+
+_.each(items.slice(0,2), function(item, i) {
+    window.setTimeout(function() {
+        infinite_items_collection.add(item);
     }, i);
 });

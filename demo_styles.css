@@ -1,5 +1,9 @@
 @import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700);
 
+body{
+  padding-bottom: 100px;
+}
+
 * {
   font-family: "Source Sans Pro", sans-serif;
 }
@@ -21,4 +25,8 @@ input {
 ol.items{
   height: 195px;
   margin-bottom: 50px;
+}
+
+ol.infinite_items li{
+  height: 350px;
 }

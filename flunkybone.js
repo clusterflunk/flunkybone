@@ -117,6 +117,68 @@ var Flunkybone = {};
     });
 
     /*
+    * Flunkybone.InfiniteCollectionView
+    */
+
+    var InfiniteCollectionView = Flunkybone.InfiniteCollectionView = Backbone.View.extend({
+        modelView: null,
+        initialize: function(options) {
+            _.bindObj(this);
+
+            /* Vars */
+            this.options = options;
+            this.limit = options.load_amount_limit;
+            this.scroll_el = options.scroll_el;
+            this.spinner_gif = options.spinner_gif;
+
+            /* Events */
+            this.scroll_el.click(this.ready_to_load);
+            $(window).on("scroll", _.debounce(this.ready_to_load, 0));
+        },
+
+        load_more: function() {
+            /* show spinner & hide text */
+            this.scroll_el.hide();
+            this.spinner_gif.show();
+
+            /* fetch */
+            this.collection.fetch({
+                'merge': true,
+                'data': {
+                    'offset': this.collection.length,
+                    'limit': this.limit
+                },
+                'success': this.hide_spinner
+            });
+        },
+
+        /* checks position of scroll element on page before loading more */
+        ready_to_load: function() {
+
+            var docViewTop = $(window).scrollTop();
+            var docViewBottom = docViewTop + $(window).height();
+
+            var elemTop = this.scroll_el.offset().top;
+            // add to this measurement to ask element is at least x pixels up from bottom
+            var elemBottom = elemTop + this.scroll_el.height() + 40;
+
+            /* if element is scrolled into the view */
+            if((elemBottom <= docViewBottom) && (elemTop >= docViewTop)) {
+                this.load_more();
+            }
+
+        },
+
+        /* hide spinner */
+        hide_spinner: function() {
+            /* hide spinner & show text */
+            this.scroll_el.show();
+            this.spinner_gif.hide();
+
+        }
+    });
+
+    /*
     * Flunkybone.ViewCollection ---> ViewModel?
     */
 
