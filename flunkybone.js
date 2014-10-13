@@ -63,10 +63,13 @@ var Flunkybone = {};
 
                     /* remove from our list of views */
                     this.views.splice(index, 1);
-                } else {
-                    /* _.every loop breaks on false, so to counter the offset model id, return true in else fork */
-                    return true;
+
+                    return false;
                 }
+
+                /* _.every loop breaks on false, so to counter the offset model id, return true in else fork */
+                return true;
+
             }, this);
         }
     });
@@ -81,36 +84,26 @@ var Flunkybone = {};
             _.bindObj(this);
 
             /* Vars */
-            this.options = options
-            this.input_el = this.options.input_el
+            this.options = options;
+            this.input_el = this.options.input_el;
 
             /* Events */
-            this.input_el.keydown(_.debounce(this.filter_collection, 0));
+            this.input_el.keyup(_.debounce(this.filter_collection, 0));
         },
 
         /* 
         * Filtering through a collection
         */
 
-        input_el_keydown: function(e) {
-            /* if user presses non alpha numeric key */
-            if (!((48 >= e.which <= 90) || (96 >= e.which <= 105))) {
-                /* prevent the form from submitting */
-                return false;
-            }
-        },
         filter_collection: function(e) {
-            if (this.input_el.val() !== '') {
-                /* show spinner */
-
-                this.collection.fetch({
-                    'reset': true,
-                    'data': {
-                        's': this.input_el.val()
-                    },
-                    'success': this.filter_collection_success
-                });
-            }
+            /* show spinner */
+            this.collection.fetch({
+                'reset': true,
+                'data': {
+                    's': this.input_el.val()
+                },
+                'success': this.filter_collection_success
+            });
         },
         filter_collection_success: function(e) {
             /* hide spinner */

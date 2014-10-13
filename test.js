@@ -19,11 +19,21 @@ var Item = Backbone.Model.extend({
 
 var Items = Backbone.Collection.extend({
     model: Item,
-    fetch: function(){
-        var results = [
-            {"id": "3", "body": "this is greece", "html": "<li style=\"background-color: #966FD6;\">this is greece</li>"},
-            {"id": "5", "body": "this is rome", "html": "<li style=\"background-color: #FFB347;\">this is rome</li>"}
-        ];
+    fetch: function(options){
+
+        var results = [];
+        var search = options.data.s;
+
+        _.each(items, function(item) {
+            if(item.body.indexOf(search) != -1) {
+                results.push(item);
+            }
+        });
+
+        if(search == "") {
+            results = items;
+        }
+
         this.set(results);
     }
 });
